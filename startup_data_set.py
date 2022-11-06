@@ -17,7 +17,6 @@ import scipy.sparse as sp
 device = torch.device('cpu')
 
 
-# In[2]:
 
 
 class COMP4222Dataset(DGLDataset):
@@ -65,9 +64,6 @@ class COMP4222Dataset(DGLDataset):
 
     def __len__(self):
         return 1
-
-
-# In[66]:
 
 
 class COMP4222Dataset_hetero(DGLDataset):
