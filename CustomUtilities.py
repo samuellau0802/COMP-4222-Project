@@ -41,7 +41,7 @@ def generate_neg_graph(graph, val_ratio=0.1, test_ratio=0.1):
     # Find all negative edges and split them for training and testing
     #use sparse matrix to save memory
     # ,shape = (torch.max(v)+1,torch.max(v)+1)
-    adj = sp.coo_matrix((np.ones(len(u)), (u.numpy(), v.numpy())))
+    adj = sp.coo_matrix((np.ones(len(u)), (u.cpu().numpy(), v.cpu().numpy())))
     adj_neg = 1 - adj.todense()
     neg_u, neg_v = np.where(adj_neg != 0) # negative edge, we don't have edge
     neg_eids = np.random.choice(len(neg_u), graph.number_of_edges())
@@ -57,6 +57,15 @@ def generate_neg_graph(graph, val_ratio=0.1, test_ratio=0.1):
     test_neg_g = dgl.graph((test_neg_u, test_neg_v), num_nodes=graph.number_of_nodes())
 
     return train_neg_g, val_neg_g, test_neg_g
+
+
+
+
+
+
+
+
+
 
 def generate_train_test_valid_hetero_graph(graph, test_ratio=0.1,valid_ratio = 0.1, etype=("investor","raise","startup")):
     utype, efeat, vtype = etype
