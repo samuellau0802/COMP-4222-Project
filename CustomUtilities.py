@@ -42,7 +42,7 @@ def generate_neg_graph(graph, val_ratio=0.1, test_ratio=0.1):
     #use sparse matrix to save memory
     # ,shape = (torch.max(v)+1,torch.max(v)+1)
     adj = sp.coo_matrix((np.ones(len(u)), (u.numpy(), v.numpy())))
-    adj_neg = 1 - adj.todense() - np.eye(len(u.numpy()),len(v.numpy()))
+    adj_neg = 1 - adj.todense()
     neg_u, neg_v = np.where(adj_neg != 0) # negative edge, we don't have edge
     neg_eids = np.random.choice(len(neg_u), graph.number_of_edges())
     test_size = int(len(neg_eids) * test_ratio)
