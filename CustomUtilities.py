@@ -2,7 +2,7 @@ import numpy as np
 import scipy.sparse as sp
 import torch
 import dgl
-
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 def generate_pos_graph(graph, val_ratio=0.1, test_ratio=0.1):
     '''Input the graph, return a tuple of 4 graphs in the form of (train_g, train_pos_g, val_pos_g, test_pos_g). It returns the positive graphs
     @param graph: the dgl graph
@@ -181,7 +181,7 @@ def construct_negative_hetero_graph(graph, k, etype):
     # k = 5
     utype, _, vtype = etype
     src, dst = graph.edges(etype=etype)
-    neg_src = src.repeat_interleave(k)
-    neg_dst = torch.randint(0, graph.num_nodes(vtype), (len(src) * k,))
+    neg_src = src.repeat_interleave(k).to(device)
+    neg_dst = torch.randint(0, graph.num_nodes(vtype), (len(src) * k,)).to(device)
     return dgl.heterograph(
         {etype: (neg_src, neg_dst)})

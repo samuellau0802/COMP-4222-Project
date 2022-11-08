@@ -83,15 +83,18 @@ class COMP4222Dataset_hetero(DGLDataset):
         dictionary = dict(zip(np.unique(self.df_investments.funded_object_id.values),self.df_startups.index.values))
         self.df_investments["funded_object_id"] = self.df_investments["funded_object_id"].replace(dictionary)
         
+        
+        
         self.df_investments = self.df_investments.groupby(['investor_object_id','funded_object_id']).sum()
         self.df_investments = self.df_investments.reset_index()
         self.investments_edge = len(self.df_investments)
         
         self.startup_node = len(self.df_investments)
         self.investor_node = len(self.df_investors)
+        print(self.investor_node)
         self.graph = dgl.heterograph(
             {
-                ("investor", "i_s", "startup"): (torch.tensor(self.df_investments.investor_object_id.values.tolist())
+                ("investor", "raise", "startup"): (torch.tensor(self.df_investments.investor_object_id.values.tolist())
                                                  ,torch.tensor(self.df_investments.funded_object_id.values.tolist())),
             }
         ).to(device)
