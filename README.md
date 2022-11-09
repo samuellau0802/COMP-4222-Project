@@ -13,10 +13,11 @@
 ## Result
 | Model   |      Train AUC |  Val AUC | Test AUC | Epochs |
 |:----------|:-------------:|:------:|:------:|:------------------:|
+| Matrix Factorization (Baseline) |   0.91    |             / |   /  |      3000        |
 | GraphSAGE |   0.94       |  0.84 | 0.85  |1500               |
 | GCN |              0.80  |   0.76|   0.74| 42           | 
 | GAT |   0.88    |             0.80 |   0.80  |      300        |
-  
+| VGAE |   0.72    |             0.75 |   0.74  |      511        |
 
 
 ## Further Direction
