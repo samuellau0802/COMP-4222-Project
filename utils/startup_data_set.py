@@ -14,7 +14,8 @@ import pandas as pd
 import numpy as np
 import dgl
 import scipy.sparse as sp
-device = torch.device('cpu')
+
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 
@@ -43,20 +44,20 @@ class COMP4222Dataset(DGLDataset):
         self.investor_node = len(self.df_investors)
         
         self.graph = dgl.graph((torch.tensor(self.df_investments.funded_object_id.values.tolist()), 
-                                torch.tensor(self.df_investments.investor_object_id.values.tolist())))
+                                torch.tensor(self.df_investments.investor_object_id.values.tolist()))).to(device)
 
         
         
         self.graph.ndata['feat'] = torch.concat((torch.tensor(self.df_startups.iloc[:, 3:].to_numpy()), 
                                                  torch.tensor(np.pad(self.df_investors.iloc[:, 2:].to_numpy(), 
                                                                      [(0,0),(0,120)], 
-                                                                     mode='constant', constant_values=0))))
+                                                                     mode='constant', constant_values=0)))).to(device)
         # 0 for startup, 1 for investor
         self.graph.ndata['label'] = torch.concat((torch.zeros(len(self.df_startups)), 
-                                                  torch.ones(len(self.df_investors))))
+                                                  torch.ones(len(self.df_investors)))).to(device)
 
         edge_feature = [i for i in self.df_investments.columns if i not in ["funding_round_id", "funded_object_id", "investor_object_id"]]
-        self.graph.edata['feat'] = torch.tensor(self.df_investments[edge_feature].to_numpy())
+        self.graph.edata['feat'] = torch.tensor(self.df_investments[edge_feature].to_numpy()).to(device)
   
 
     def __getitem__(self, i):
@@ -82,23 +83,26 @@ class COMP4222Dataset_hetero(DGLDataset):
         dictionary = dict(zip(np.unique(self.df_investments.funded_object_id.values),self.df_startups.index.values))
         self.df_investments["funded_object_id"] = self.df_investments["funded_object_id"].replace(dictionary)
         
+        
+        
         self.df_investments = self.df_investments.groupby(['investor_object_id','funded_object_id']).sum()
         self.df_investments = self.df_investments.reset_index()
         self.investments_edge = len(self.df_investments)
         
         self.startup_node = len(self.df_investments)
         self.investor_node = len(self.df_investors)
+        print(self.investor_node)
         self.graph = dgl.heterograph(
             {
-                ("investor", "i_s", "startup"): (torch.tensor(self.df_investments.investor_object_id.values.tolist())
+                ("investor", "raise", "startup"): (torch.tensor(self.df_investments.investor_object_id.values.tolist())
                                                  ,torch.tensor(self.df_investments.funded_object_id.values.tolist())),
             }
-        )
+        ).to(device)
 
-        self.graph.nodes["investor"].data['feat'] = torch.tensor(np.pad(self.df_investors.iloc[:, 2:].to_numpy(), [(0,0),(0,120)], mode='constant', constant_values=0))
-        self.graph.nodes["startup"].data['feat'] = torch.tensor(self.df_startups.iloc[:, 3:].to_numpy())
+        self.graph.nodes["investor"].data['feat'] = torch.tensor(np.pad(self.df_investors.iloc[:, 2:].to_numpy(), [(0,0),(0,120)], mode='constant', constant_values=0)).to(device)
+        self.graph.nodes["startup"].data['feat'] = torch.tensor(self.df_startups.iloc[:, 3:].to_numpy()).to(device)
         edge_feature = [i for i in self.df_investments.columns if i not in ["funding_round_id", "funded_object_id", "investor_object_id"]]
-        self.graph.edata['feat'] = torch.tensor(self.df_investments[edge_feature].to_numpy())
+        self.graph.edata['feat'] = torch.tensor(self.df_investments[edge_feature].to_numpy()).to(device)
   
 
     def __getitem__(self, i):
