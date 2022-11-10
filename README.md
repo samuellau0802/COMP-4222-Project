@@ -1,7 +1,5 @@
 # COMP-4222-Project
 
-## rmb to put data under data folder before submission
-
 ## Topic:
 **Graph Neural Network in recommending venture capital investments for startups and investors**
 ### Background:
@@ -22,15 +20,44 @@ consider previous deal transactions, which act as the links for training data.
 * Raw data CSVs
     * [link](https://hkustconnect-my.sharepoint.com/:f:/g/personal/cmslau_connect_ust_hk/EliRyyIOmHJPjvnQSazTQuYBftxnTFjv0UmRHQSNlLdxqw?e=pGdIgk)
 
-    * Download all csv and put them under the folder *raw_data*
+* Raw data is preprocessed through */preprocessing/data_formatting.ipynb* *
 
-* Data then is formatted under the folder *data*
+* Data then is formatted and stored under the folder */data*
 
 #### Stats
 * Number of Nodes (25446)
-    * Investors: xxxxx
-    * Startups: xxxxx
+    * Investors: 7594
+    * Startups: 17852
 * Number of Edges (45621)
+
+
+---
+## File Structure
+### Data
+* Store formatted csv
+### Preprocessing
+* Notebook for preprocessing raw data
+### raw_data
+* Store raw data
+
+### utils
+* Under */utils*, there are 4 sub-folders including:
+1. *CustomMetrics.py*: functions to compute loss and auc
+2. *CustomUtilities.py*: functions to generate the positive and negative graph. Also used to perform train, test, val split.
+3. *PredictorClasses.py*: contains DotPredictor and MLPPredictor
+4. *startup_data_set.py*: includes dataset class
+
+### model training notebooks
+* ChebyshevGCN
+* EdgeConv(DGCNN)
+* EGAT
+* GAT
+* GCN
+* GraphSAGE
+* HGT
+* Matrix Factorization
+
+Above are models that perform link prediction based on different method
 
 ---
 ## Models
@@ -39,12 +66,20 @@ We tested serveral models, such as
 * GraphSAGE
 * Graph Convolutional Network
 * Graph Attention Network
-* ...
+* ChebyShev GCN
+* VGAE
+* DGCNN
+* HGT
+* EGAT
 
 
 ---
-
 ## Result
+Description fo plots generation in notebooks:
+Blue line: training set result
+Orange line: validation set result
+
+
 | Model                           | Train AUC | Val AUC | Test AUC | Epochs |
 |:------------------------------- |:---------:|:-------:|:--------:|:------:|
 | Matrix Factorization (Baseline) |   0.91    |    /    |    /     |  3000  |
@@ -61,4 +96,5 @@ We tested serveral models, such as
 ## Further Direction
 1. Overfitting Problem
     * Overfitting occurs even a high dropout rate (0.8) is added in several models. In the future, more normalization techniques could be added.
-2. VGAE result? 
+2. VGAE 
+    * Underfitting occurs due to the resources and time we have, we are unable to continue the training.
