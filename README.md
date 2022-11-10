@@ -47,7 +47,7 @@ consider previous deal transactions, which act as the links for training data.
 3. *PredictorClasses.py*: contains DotPredictor and MLPPredictor
 4. *startup_data_set.py*: includes dataset class
 
-### model training notebooks
+### Model Training Notebooks
 * ChebyshevGCN
 * EdgeConv(DGCNN)
 * EGAT
@@ -59,18 +59,6 @@ consider previous deal transactions, which act as the links for training data.
 
 Above are models that perform link prediction based on different method
 
----
-## Models
-We tested serveral models, such as
-* Matrix Factorization
-* GraphSAGE
-* Graph Convolutional Network
-* Graph Attention Network
-* ChebyShev GCN
-* VGAE
-* DGCNN
-* HGT
-* EGAT
 
 
 ---
