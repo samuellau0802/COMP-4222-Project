@@ -42,6 +42,7 @@ def generate_neg_graph(graph, val_ratio=0.1, test_ratio=0.1):
     #use sparse matrix to save memory
     # ,shape = (torch.max(v)+1,torch.max(v)+1)
     adj = sp.coo_matrix((np.ones(len(u)), (u.cpu().numpy(), v.cpu().numpy())))
+    print(adj.shape)
     adj_neg = 1 - adj.todense()
     neg_u, neg_v = np.where(adj_neg != 0) # negative edge, we don't have edge
     neg_eids = np.random.choice(len(neg_u), graph.number_of_edges())
@@ -185,3 +186,22 @@ def construct_negative_hetero_graph(graph, k, etype):
     neg_dst = torch.randint(0, graph.num_nodes(vtype), (len(src) * k,)).to(device)
     return dgl.heterograph(
         {etype: (neg_src, neg_dst)})
+
+
+def generate_recommend_dict(train_pos_g,pos_score):
+    recommend_pos_dict = {}
+    softmax_train_g = dgl.remove_self_loop(train_pos_g)
+    i = 0
+    for edge, target in zip(softmax_train_g.edges()[0],softmax_train_g.edges()[1]):
+        if edge.item() in recommend_pos_dict.keys():
+            if(pos_score[i] > pos_score.mean()):
+                recommend_pos_dict[edge.item()].append([target.item(),pos_score[i].item()])
+        else:
+            if(pos_score[i] > pos_score.mean()):
+                recommend_pos_dict[edge.item()] = [[target.item(),pos_score[i].item()]]
+        i+=1
+    recommend_pos_dict = dict(sorted(recommend_pos_dict.items()))
+    return recommend_pos_dict
+def generate_list_of_recommend(rec_dict, index):
+    li = recommend_pos_dict[index]
+    return sorted(li,key=lambda l:l[1], reverse=True)
