@@ -28,7 +28,10 @@ def generate_pos_graph(graph, val_ratio=0.1, test_ratio=0.1):
     val_pos_g = dgl.graph((val_u, val_v), num_nodes=graph.number_of_nodes())
     test_pos_g = dgl.graph((test_u, test_v), num_nodes=graph.number_of_nodes())
 
-    return train_g, train_pos_g, val_pos_g, test_pos_g
+    val_g = dgl.remove_edges(graph, eids[val_size:])
+    test_g = dgl.remove_edges(graph, np.concatenate([eids[:val_size], eids[test_size+val_size:]]))
+
+    return train_g, train_pos_g, val_pos_g, test_pos_g, val_g, test_g
 
 def generate_neg_graph(graph, val_ratio=0.1, test_ratio=0.1):
     '''Input the graph, return a tuple of 3 graphs in the form of (train_neg_g, val_neg_g, test_neg_g). It returns the negative graphs
